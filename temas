@@ -4488,6 +4488,17 @@ do
                         Color = Library.Theme["Outline 1"]
                     }):AddToTheme({Color = 'Outline 1'})
 
+                    Items["SliderHit"] = Library:Create("TextButton", {
+                        Name = "\0",
+                        Parent = Items["Slider"].Instance,
+                        BackgroundTransparency = 1,
+                        Text = "",
+                        AutoButtonColor = false,
+                        Size = UDim2.new(1, 0, 1, 0),
+                        BorderSizePixel = 0,
+                        ZIndex = 5
+                    })
+
                     Items["Accent"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Items["RealSlider"].Instance,
@@ -4559,7 +4570,7 @@ do
                 end
 
                 function Slider:GetSize(Input)
-                    local SizeX = (Input.Position.X - Items["RealSlider"].Instance.AbsolutePosition.X) / Items["RealSlider"].Instance.AbsoluteSize.X
+                    local SizeX = (Input.Position.X - Items["SliderHit"].Instance.AbsolutePosition.X) / Items["SliderHit"].Instance.AbsoluteSize.X
                     local Value = ((Slider.Max - Slider.Min) * SizeX) + Slider.Min
 
                     return Value
@@ -4577,11 +4588,12 @@ do
                     Items["Value"].Instance.TextTransparency = faded
                     Items["Accent"].Instance.BackgroundTransparency = Slider.Enabled and 0 or 0.65
                     Items["RealSlider"].Instance.Active = Slider.Enabled
+                    Items["SliderHit"].Instance.Active = Slider.Enabled
                 end
 
                 local InputChanged
 
-                Items["RealSlider"]:Connect("InputBegan", function(Input)
+                Items["SliderHit"]:Connect("InputBegan", function(Input)
                     if Slider.Enabled == false then
                         return
                     end
@@ -4747,38 +4759,6 @@ do
                         BackgroundColor3 = Library.Theme["Accent"]
                     }):AddToTheme({BackgroundColor3 = 'Accent'})
 
-                    local function knob()
-                        local handle = Library:Create("TextButton", {
-                            Name = "\0",
-                            Parent = Items["Track"].Instance,
-                            Text = "",
-                            AutoButtonColor = false,
-                            AnchorPoint = Vector2.new(0.5, 0.5),
-                            Position = UDim2.new(0, 0, 0.5, 0),
-                            Size = UDim2.fromOffset(10, 10),
-                            BorderSizePixel = 0,
-                            ZIndex = 2,
-                            BackgroundColor3 = Library.Theme["Accent"]
-                        }):AddToTheme({BackgroundColor3 = 'Accent'})
-
-                        Library:Create("UICorner", {
-                            Name = "\0",
-                            Parent = handle.Instance,
-                            CornerRadius = UDim.new(1, 0)
-                        })
-
-                        Library:Create("UIStroke", {
-                            Name = "\0",
-                            Parent = handle.Instance,
-                            ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                            Color = Library.Theme["Outline 1"]
-                        }):AddToTheme({Color = 'Outline 1'})
-
-                        return handle
-                    end
-
-                    Items["MinKnob"] = knob()
-                    Items["MaxKnob"] = knob()
                     Slider.Items = Items
                 end
 
@@ -4802,8 +4782,6 @@ do
                     local minAlpha = (MinValue - Slider.Min) / span
                     local maxAlpha = (MaxValue - Slider.Min) / span
 
-                    Items["MinKnob"].Instance.Position = UDim2.new(minAlpha, 0, 0.5, 0)
-                    Items["MaxKnob"].Instance.Position = UDim2.new(maxAlpha, 0, 0.5, 0)
                     Items["Fill"].Instance.Position = UDim2.new(minAlpha, 0, 0, 0)
                     Items["Fill"].Instance.Size = UDim2.new(math.max(maxAlpha - minAlpha, 0), 0, 1, 0)
                     Items["Value"].Instance.Text = string.format("%s%s - %s%s", tostring(MinValue), Slider.Suffix, tostring(MaxValue), Slider.Suffix)
@@ -4831,18 +4809,6 @@ do
                     local value = fromX(Input.Position.X)
                     local which = math.abs(value - Slider.MinValue) <= math.abs(value - Slider.MaxValue) and "min" or "max"
                     beginDrag(which, Input)
-                end)
-
-                Items["MinKnob"]:Connect("InputBegan", function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                        beginDrag("min", Input)
-                    end
-                end)
-
-                Items["MaxKnob"]:Connect("InputBegan", function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                        beginDrag("max", Input)
-                    end
                 end)
 
                 Library:Connect(UserInputService.InputChanged, function(Input)
@@ -4989,19 +4955,22 @@ do
                         Parent = Items["Value"].Instance
                     })
 
-                    Items["OptionHolder"] = Library:Create("TextButton", {
+                    Dropdown.MaxSize = 180
+
+                    Items["OptionHolder"] = Library:Create("ScrollingFrame", {
                         Name = "\0",
-                        FontFace = Library.Font,
-                        TextSize = Library.FontSize,
                         Parent = Library.UnusedHolder.Instance,
                         Visible = false,
-                        TextColor3 = Color3.fromRGB(0, 0, 0),
-                        Text = "",
-                        AutoButtonColor = false,
+                        Active = true,
+                        ClipsDescendants = true,
+                        CanvasSize = UDim2.new(0, 0, 0, 0),
+                        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+                        ScrollingDirection = Enum.ScrollingDirection.Y,
+                        ScrollBarThickness = 4,
+                        ScrollBarImageTransparency = 1,
+                        BorderSizePixel = 0,
                         Size = UDim2.new(0, 246, 0, 0),
                         Position = UDim2.new(0, 979, 0, 167),
-                        BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Background"]
                     }):AddToTheme({BackgroundColor3 = 'Background'})
 
@@ -5031,7 +5000,7 @@ do
                         PaddingLeft = UDim.new(0, 6)
                     })
 
-                    Library:Create("UIListLayout", {
+                    Dropdown.OptionLayout = Library:Create("UIListLayout", {
                         Name = "\0",
                         Parent = Items["OptionHolder"].Instance,
                         Padding = UDim.new(0, 5),
@@ -5238,7 +5207,7 @@ do
 
                     if Dropdown.IsOpen then
                         OptionHolder.Position = UDim2.new(0, RealDropdown.AbsolutePosition.X, 0, RealDropdown.AbsolutePosition.Y + RealDropdown.AbsoluteSize.Y + GuiInset)
-                        OptionHolder.Size = UDim2.new(0, RealDropdown.AbsoluteSize.X, 0, Dropdown.MaxSize)
+                        OptionHolder.Size = UDim2.new(0, RealDropdown.AbsoluteSize.X, 0, math.min(Dropdown.OptionLayout.Instance.AbsoluteContentSize.Y + 12, Dropdown.MaxSize))
 
                         OptionHolder.Parent = Library.Holder.Instance
                         Items["OptionHolder"]:Tween({Position = UDim2.new(0, RealDropdown.AbsolutePosition.X, 0, RealDropdown.AbsolutePosition.Y + RealDropdown.AbsoluteSize.Y + 10 + GuiInset)})
@@ -5700,21 +5669,8 @@ do
                                 end
                             })
                         end
-                    end
 
-                    local OtherSection = SettingsPage:Section({Name = "other", Side = 2}) do
-                        OtherSection:Button({
-                            Name = "unload",
-                            Callback = function()
-                                Library:Exit()
-                            end
-                        })
-
-                        OtherSection:Label({Name = "ui bind"}):Keybind({Flag = "uibind", Mode = "Toggle", Default = Enum.KeyCode.RightShift, Callback = function(Value)
-                            Library.MenuKeybind = Flags["uibind"].Key
-                        end})
-
-                        OtherSection:Dropdown({
+                        ThemingSection:Dropdown({
                             Name = "animation style",
                             Items = {"Linear", "Quad", "Quart", "Back", "Bounce", "Circular", "Cubic", "Elastic", "Exponential", "Sine", "Quint"},
                             Default = "Cubic",
@@ -5723,7 +5679,7 @@ do
                             end
                         })
 
-                        OtherSection:Dropdown({
+                        ThemingSection:Dropdown({
                             Name = "animation direction",
                             Items = {"In", "Out", "InOut"},
                             Default = "Out",
@@ -5732,7 +5688,7 @@ do
                             end
                         })
 
-                        OtherSection:Slider({
+                        ThemingSection:Slider({
                             Name = "animation time",
                             Min = 0,
                             Max = 1,
@@ -5741,6 +5697,35 @@ do
                             Suffix = "s",
                             Callback = function(Value)
                                 Library.Animation.Time = Value
+                            end
+                        })
+
+                        ThemingSection:Button({
+                            Name = "unload",
+                            Callback = function()
+                                Library:Exit()
+                            end
+                        })
+                    end
+
+                    local OtherSection = SettingsPage:Section({Name = "other", Side = 2}) do
+                        OtherSection:Label({Name = "ui bind"}):Keybind({Flag = "uibind", Mode = "Toggle", Default = Enum.KeyCode.RightShift, Callback = function(Value)
+                            Library.MenuKeybind = Flags["uibind"].Key
+                        end})
+
+                        OtherSection:Button({
+                            Name = "rejoin",
+                            Callback = function()
+                                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId)
+                            end
+                        })
+
+                        OtherSection:Button({
+                            Name = "copy asset",
+                            Callback = function()
+                                local joinScript = string.format('game:GetService("TeleportService"):TeleportToPlaceInstance(%d, "%s")', game.PlaceId, game.JobId)
+                                pcall(setclipboard, joinScript)
+                                Library:Notification{Name = "join script copied", Time = 3}
                             end
                         })
                     end
