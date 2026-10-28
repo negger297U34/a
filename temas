@@ -3845,6 +3845,8 @@ do
                     })
                 end
 
+                MultiSection.Items = Items
+
                 function MultiSection:Add(Name)
                     local NewSection = {
                         Active = false,
