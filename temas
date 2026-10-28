@@ -3665,9 +3665,9 @@ do
                     Items["Section"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Section.Page.ColumnsData[Section.Side].Instance,
-                        Size = UDim2.new(1, 0, 0, 35),
+                        Size = Params.MaxHeight and UDim2.new(1, 0, 0, Params.MaxHeight) or UDim2.new(1, 0, 0, 35),
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.Y,
+                        AutomaticSize = Params.MaxHeight and Enum.AutomaticSize.None or Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Inline"]
                     }):AddToTheme({BackgroundColor3 = 'Inline'})
 
@@ -3707,7 +3707,20 @@ do
                         Parent = Items["Text"].Instance
                     })
 
-                    Items["Content"] = Library:Create("Frame", {
+                    Items["Content"] = Params.MaxHeight and Library:Create("ScrollingFrame", {
+                        Name = "\0",
+                        Parent = Items["Section"].Instance,
+                        BackgroundTransparency = 1,
+                        Position = UDim2.new(0, 4, 0, 26),
+                        Size = UDim2.new(1, -8, 1, -32),
+                        BorderSizePixel = 0,
+                        CanvasSize = UDim2.new(0, 0, 0, 0),
+                        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+                        ScrollingDirection = Enum.ScrollingDirection.Y,
+                        ScrollBarThickness = 3,
+                        ScrollBarImageColor3 = Color3.fromRGB(140, 140, 160),
+                        Active = true
+                    }) or Library:Create("Frame", {
                         Name = "\0",
                         Parent = Items["Section"].Instance,
                         BackgroundTransparency = 1,
@@ -3754,9 +3767,9 @@ do
                         Name = "\0",
                         Parent = MultiSection.Page.ColumnsData[MultiSection.Side].Instance,
                         BackgroundTransparency = 1,
-                        Size = UDim2.new(1, 0, 0, 0),
+                        Size = Params.MaxHeight and UDim2.new(1, 0, 0, Params.MaxHeight) or UDim2.new(1, 0, 0, 0),
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.Y
+                        AutomaticSize = Params.MaxHeight and Enum.AutomaticSize.None or Enum.AutomaticSize.Y
                     })
 
                     Items["Sections"] = Library:Create("Frame", {
@@ -3778,10 +3791,10 @@ do
                     Items["Inline"] = Library:Create("Frame", {
                         Name = "\0",
                         Parent = Items["MultiSection"].Instance,
-                        Size = UDim2.new(1, 0, 0, 35),
+                        Size = Params.MaxHeight and UDim2.new(1, 0, 1, -23) or UDim2.new(1, 0, 0, 35),
                         Position = UDim2.new(0, 0, 0, 23),
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.Y,
+                        AutomaticSize = Params.MaxHeight and Enum.AutomaticSize.None or Enum.AutomaticSize.Y,
                         BackgroundColor3 = Library.Theme["Inline"]
                     }):AddToTheme({BackgroundColor3 = 'Inline'})
 
@@ -3802,7 +3815,20 @@ do
                         BorderOffset = UDim.new(0, 1)
                     }):AddToTheme({Color = 'Outline 3'})
 
-                    Items["Content"] = Library:Create("Frame", {
+                    Items["Content"] = Params.MaxHeight and Library:Create("ScrollingFrame", {
+                        Name = "\0",
+                        Parent = Items["Inline"].Instance,
+                        BackgroundTransparency = 1,
+                        Position = UDim2.new(0, 4, 0, 7),
+                        Size = UDim2.new(1, -8, 1, -14),
+                        BorderSizePixel = 0,
+                        CanvasSize = UDim2.new(0, 0, 0, 0),
+                        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+                        ScrollingDirection = Enum.ScrollingDirection.Y,
+                        ScrollBarThickness = 3,
+                        ScrollBarImageColor3 = Color3.fromRGB(140, 140, 160),
+                        Active = true
+                    }) or Library:Create("Frame", {
                         Name = "\0",
                         Parent = Items["Inline"].Instance,
                         BackgroundTransparency = 1,
@@ -3934,7 +3960,8 @@ do
                             Name = "\0",
                             Parent = Library.UnusedHolder.Instance,
                             BackgroundTransparency = 1,
-                            Size = UDim2.new(1, 0, 1, 0),
+                            Size = UDim2.new(1, 0, 0, 0),
+                            AutomaticSize = Enum.AutomaticSize.Y,
                             BorderSizePixel = 0
                         })
 
@@ -4915,6 +4942,7 @@ do
                         Position = UDim2.new(0, 2, 1, 0),
                         Size = UDim2.new(1, -4, 0, 18),
                         BorderSizePixel = 0,
+                        ClipsDescendants = true,
                         BackgroundColor3 = Library.Theme["Inline"]
                     }):AddToTheme({BackgroundColor3 = 'Inline'})
 
@@ -4942,12 +4970,13 @@ do
                         Parent = Items["RealDropdown"].Instance,
                         TextColor3 = Library.Theme["Inactive Text"],
                         Text = "...",
+                        TextTruncate = Enum.TextTruncate.AtEnd,
                         AnchorPoint = Vector2.new(0, 0.5),
-                        Size = UDim2.new(0, 0, 0, 12),
+                        Size = UDim2.new(1, -12, 0, 12),
                         BackgroundTransparency = 1,
                         Position = UDim2.new(0, 6, 0.5, 0),
                         BorderSizePixel = 0,
-                        AutomaticSize = Enum.AutomaticSize.X
+                        TextXAlignment = Enum.TextXAlignment.Left
                     }):AddToTheme({TextColor3 = 'Inactive Text'})
 
                     Library:Create("UIStroke", {
@@ -4967,7 +4996,7 @@ do
                         AutomaticCanvasSize = Enum.AutomaticSize.Y,
                         ScrollingDirection = Enum.ScrollingDirection.Y,
                         ScrollBarThickness = 4,
-                        ScrollBarImageTransparency = 1,
+                        ScrollBarImageTransparency = 0,
                         BorderSizePixel = 0,
                         Size = UDim2.new(0, 246, 0, 0),
                         Position = UDim2.new(0, 979, 0, 167),
@@ -5207,7 +5236,12 @@ do
 
                     if Dropdown.IsOpen then
                         OptionHolder.Position = UDim2.new(0, RealDropdown.AbsolutePosition.X, 0, RealDropdown.AbsolutePosition.Y + RealDropdown.AbsoluteSize.Y + GuiInset)
-                        OptionHolder.Size = UDim2.new(0, RealDropdown.AbsoluteSize.X, 0, math.min(Dropdown.OptionLayout.Instance.AbsoluteContentSize.Y + 12, Dropdown.MaxSize))
+                        local OptionCount = 0
+                        for _ in Dropdown.Options do
+                            OptionCount += 1
+                        end
+                        local ContentHeight = math.max(Dropdown.OptionLayout.Instance.AbsoluteContentSize.Y, OptionCount * 17)
+                        OptionHolder.Size = UDim2.new(0, RealDropdown.AbsoluteSize.X, 0, math.min(ContentHeight + 12, Dropdown.MaxSize))
 
                         OptionHolder.Parent = Library.Holder.Instance
                         Items["OptionHolder"]:Tween({Position = UDim2.new(0, RealDropdown.AbsolutePosition.X, 0, RealDropdown.AbsolutePosition.Y + RealDropdown.AbsoluteSize.Y + 10 + GuiInset)})
@@ -5697,13 +5731,6 @@ do
                             Suffix = "s",
                             Callback = function(Value)
                                 Library.Animation.Time = Value
-                            end
-                        })
-
-                        ThemingSection:Button({
-                            Name = "unload",
-                            Callback = function()
-                                Library:Exit()
                             end
                         })
                     end
